@@ -17,7 +17,8 @@ enum class TokenType {
     RIGHT_PAREN,
     LEFT_BRACE,
     RIGHT_BRACE,
-    EQUALS
+    EQUALS,
+    DOUBLE_EQUALS
 };
 
 struct Token {

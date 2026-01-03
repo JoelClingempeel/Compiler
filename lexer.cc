@@ -3,17 +3,18 @@
 
 std::string_view TokenTypeToString(TokenType type) {
     switch (type) {
-        case TokenType::IF:          return "IF";
-        case TokenType::ELSE:        return "ELSE";
-        case TokenType::WHILE:       return "WHILE";
-        case TokenType::IDENTIFIER:  return "IDENTIFIER";
-        case TokenType::NUMBER:      return "NUMBER";
-        case TokenType::LEFT_PAREN:  return "LEFT_PAREN";
-        case TokenType::RIGHT_PAREN: return "RIGHT_PAREN";
-        case TokenType::LEFT_BRACE:  return "LEFT_BRACE";
-        case TokenType::RIGHT_BRACE: return "RIGHT_BRACE";
-        case TokenType::EQUALS:      return "EQUALS";
-        default:                     return "UNKNOWN_TOKEN";
+        case TokenType::IF:            return "IF";
+        case TokenType::ELSE:          return "ELSE";
+        case TokenType::WHILE:         return "WHILE";
+        case TokenType::IDENTIFIER:    return "IDENTIFIER";
+        case TokenType::NUMBER:        return "NUMBER";
+        case TokenType::LEFT_PAREN:    return "LEFT_PAREN";
+        case TokenType::RIGHT_PAREN:   return "RIGHT_PAREN";
+        case TokenType::LEFT_BRACE:    return "LEFT_BRACE";
+        case TokenType::RIGHT_BRACE:   return "RIGHT_BRACE";
+        case TokenType::EQUALS:        return "EQUALS";
+        case TokenType::DOUBLE_EQUALS: return "DOUBLE_EQUALS";
+        default:                       return "UNKNOWN_TOKEN";
     }
 }
 
@@ -75,9 +76,14 @@ void Lexer::GetToken(){
                 break;
 
             case '=':
-                // TODO Handle = vs ==.
-                lexeme = source.substr(start, 1);
-                type = TokenType::EQUALS;
+                if (cur + 1 < source.size() && source[cur + 1] == '=') {
+                    lexeme = source.substr(start, 2);
+                    type = TokenType::DOUBLE_EQUALS;
+                    cur++;
+                } else {
+                    lexeme = source.substr(start, 1);
+                    type = TokenType::EQUALS;
+                }
                 break;
         }
         tokens.push_back({lexeme, type});
