@@ -1,0 +1,92 @@
+#include "lexer.h"
+
+
+std::string_view TokenTypeToString(TokenType type) {
+    switch (type) {
+        case TokenType::IF:          return "IF";
+        case TokenType::ELSE:        return "ELSE";
+        case TokenType::WHILE:       return "WHILE";
+        case TokenType::IDENTIFIER:  return "IDENTIFIER";
+        case TokenType::NUMBER:      return "NUMBER";
+        case TokenType::LEFT_PAREN:  return "LEFT_PAREN";
+        case TokenType::RIGHT_PAREN: return "RIGHT_PAREN";
+        case TokenType::LEFT_BRACE:  return "LEFT_BRACE";
+        case TokenType::RIGHT_BRACE: return "RIGHT_BRACE";
+        case TokenType::EQUALS:      return "EQUALS";
+        default:                     return "UNKNOWN_TOKEN";
+    }
+}
+
+std::unordered_map<std::string_view, TokenType> keywords = {
+    {"if", TokenType::IF},
+    {"else", TokenType::ELSE},
+    {"while", TokenType::WHILE}
+};
+
+bool Lexer::EndReached() {
+    return cur >= source.size();
+}
+
+void Lexer::GetToken(){
+    std::string_view lexeme;
+    TokenType type;
+    start = cur;
+
+    if (isalpha(source[cur])) {
+        while (isalpha(source[cur])) {
+            cur++;
+        }
+        lexeme = source.substr(start, cur - start);
+        if (keywords.count(lexeme)) {
+            type = keywords[lexeme];
+        } else {
+            type = TokenType::IDENTIFIER;
+        }
+        tokens.push_back({lexeme, type});
+    } else if (isdigit(source[cur])) {
+        while (isdigit(source[cur])) {
+            cur++;
+        }
+        lexeme = source.substr(start, cur - start);
+        type = TokenType::NUMBER;
+        tokens.push_back({lexeme, type});
+    } else if (source[cur] == ' ' || source[cur] == '\n') {
+        cur++;
+    } else {
+        switch (source[cur]) {
+            case '(':
+                lexeme = source.substr(start, 1);
+                type = TokenType::LEFT_PAREN;
+                break;
+
+            case ')':
+                lexeme = source.substr(start, 1);
+                type = TokenType::RIGHT_PAREN;
+                break;
+
+            case '{':
+                lexeme = source.substr(start, 1);
+                type = TokenType::LEFT_BRACE;
+                break;
+
+            case '}':
+                lexeme = source.substr(start, 1);
+                type = TokenType::RIGHT_BRACE;
+                break;
+
+            case '=':
+                // TODO Handle = vs ==.
+                lexeme = source.substr(start, 1);
+                type = TokenType::EQUALS;
+                break;
+        }
+        tokens.push_back({lexeme, type});
+        cur++;
+    }
+}
+
+void Lexer::PrintTokens() {
+    for (auto token : tokens) {
+        std::cout << token.lexeme << " " << TokenTypeToString(token.type) << std::endl;
+    }
+}
