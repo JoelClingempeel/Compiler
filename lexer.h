@@ -17,6 +17,7 @@ enum class TokenType {
     SUBTRACT,
     MULTIPLY,
     DIVIDE,
+    SEMICOLON,
     LEFT_PAREN,
     RIGHT_PAREN,
     LEFT_BRACE,

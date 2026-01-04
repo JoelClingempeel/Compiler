@@ -12,6 +12,7 @@ std::string_view TokenTypeToString(TokenType type) {
         case TokenType::SUBTRACT:      return "SUBTRACT";
         case TokenType::MULTIPLY:      return "MULTIPLY";
         case TokenType::DIVIDE:        return "DIVIDE";
+        case TokenType::SEMICOLON:     return "SEMICOLON";
         case TokenType::LEFT_PAREN:    return "LEFT_PAREN";
         case TokenType::RIGHT_PAREN:   return "RIGHT_PAREN";
         case TokenType::LEFT_BRACE:    return "LEFT_BRACE";
@@ -77,6 +78,11 @@ void Lexer::GetToken(){
             case '/':
                 lexeme = source.substr(start, 1);
                 type = TokenType::DIVIDE;
+                break;
+
+            case ';':
+                lexeme = source.substr(start, 1);
+                type = TokenType::SEMICOLON;
                 break;
 
             case '(':
