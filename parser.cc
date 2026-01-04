@@ -88,3 +88,16 @@ std::unique_ptr<Node> Parser::parseAssignment() {
     }
     return left;
 }
+
+std::unique_ptr<Node> Parser::parseBraces() {
+    Token token({"{", TokenType::LEFT_BRACE});
+    std::vector<std::unique_ptr<Node>> statement_nodes;
+
+    consume(TokenType::LEFT_BRACE);
+    while (peek().type != TokenType::RIGHT_BRACE) {
+        statement_nodes.push_back(parseAssignment());
+        consume(TokenType::SEMICOLON);
+    }
+    consume(TokenType::RIGHT_BRACE);
+    return std::make_unique<Node>(token, std::move(statement_nodes));
+}
