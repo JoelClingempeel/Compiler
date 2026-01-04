@@ -36,10 +36,13 @@ void printTree(Node* node, int depth) {
 }
 
 void printFunction(FunctionNode* node) {
+    std::cout << "NAME:" << std::endl;
     std::cout << node->name.lexeme << std::endl;
+    std::cout << std::endl << "PARAMS:" << std::endl;
     for (auto& param : node->parameters) {
         std::cout << param.lexeme << std::endl;
     }
+    std::cout << std::endl << "BODY:" << std::endl;
     printTree(node->body.get(), 0);
 }
 
@@ -57,8 +60,10 @@ int main(int argc, char* argv[]) {
     }
 
     Parser parser(lexer.tokens);
-    std::unique_ptr<FunctionNode> node_ptr = parser.parseFunction();
-    printFunction(node_ptr.get());
-
+    std::vector<std::unique_ptr<FunctionNode>> func_node_ptrs = parser.parseProgram();
+    for (const auto& func_node_ptr : func_node_ptrs) {
+        printFunction(func_node_ptr.get());
+        std::cout << "============" << std::endl;
+    }
     return 0;
 }

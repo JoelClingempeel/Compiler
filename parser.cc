@@ -158,3 +158,11 @@ std::unique_ptr<FunctionNode> Parser::parseFunction() {
     auto body = parseBraces();
     return std::make_unique<FunctionNode>(name, parameters, std::move(body));
 }
+
+std::vector<std::unique_ptr<FunctionNode>> Parser::parseProgram() {
+    std::vector<std::unique_ptr<FunctionNode>> functions;
+    while (!endReached()) {
+        functions.push_back(parseFunction());
+    }
+    return functions;
+}
