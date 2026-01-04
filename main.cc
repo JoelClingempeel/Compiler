@@ -4,6 +4,7 @@
 #include <string>
 
 #include "lexer.h"
+#include "parser.h"
 
 
 std::string ReadFile(std::string path){
