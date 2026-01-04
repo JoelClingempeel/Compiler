@@ -74,3 +74,17 @@ std::unique_ptr<Node> Parser::parseExpression() {
     }
     return left;
 }
+
+std::unique_ptr<Node> Parser::parseAssignment() {
+    auto left = parseExpression();
+    if (match(TokenType::EQUALS)) {
+        if (left->token.type == TokenType::IDENTIFIER) {
+            Token operation = previous();
+            auto right = parseExpression();
+            return std::make_unique<Node>(operation, std::move(left), std::move(right));
+        } else {
+            throw std::runtime_error("Invalid assignment");
+        }
+    }
+    return left;
+}

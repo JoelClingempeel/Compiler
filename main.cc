@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
     }
 
     Parser parser(lexer.tokens);
-    std::unique_ptr<Node> node = parser.parseExpression();
+    std::unique_ptr<Node> node = parser.parseAssignment();
     printTree(node.get(), 0);
 
     return 0;

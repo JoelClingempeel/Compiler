@@ -32,6 +32,7 @@ public:
     std::unique_ptr<Node> parseUnary();
     std::unique_ptr<Node> parseTerm();
     std::unique_ptr<Node> parseExpression();
+    std::unique_ptr<Node> parseAssignment();
 };
 
 #endif  // PARSER_H
