@@ -46,11 +46,20 @@ std::unique_ptr<Node> Parser::parseFactor() {
     throw std::runtime_error("Missing number of identifier");
 }
 
-std::unique_ptr<Node> Parser::parseTerm() {
-    auto left = parseFactor();
-    while (match(TokenType::MULTIPLY) || match(TokenType::DIVIDE)) {
+std::unique_ptr<Node> Parser::parseUnary() {
+    if (match(TokenType::SUBTRACT)) {
         Token operation = previous();
         auto right = parseFactor();
+        return std::make_unique<Node>(operation, nullptr, std::move(right));
+    }
+    return parseFactor();
+}
+
+std::unique_ptr<Node> Parser::parseTerm() {
+    auto left = parseUnary();
+    while (match(TokenType::MULTIPLY) || match(TokenType::DIVIDE)) {
+        Token operation = previous();
+        auto right = parseUnary();
         left = std::make_unique<Node>(operation, std::move(left), std::move(right));
     }
     return left;
