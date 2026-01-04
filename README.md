@@ -1,9 +1,9 @@
 # Compiler
 
-So far just the lexer is implemented.
+This is a work in progress.
 
 Compile: \
-`g++ -std=c++17 lexer.cc main.cc -o lexer`
+`g++ -std=c++17 lexer.cc parser.cc main.cc -o compile`
 
 Run: \
-`./lexer test_prog.txt`
+`./compile <program_name>.txt`

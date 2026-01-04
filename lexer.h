@@ -13,6 +13,8 @@ enum class TokenType {
     WHILE,
     IDENTIFIER,
     NUMBER,
+    MULTIPLY,
+    DIVIDE,
     LEFT_PAREN,
     RIGHT_PAREN,
     LEFT_BRACE,
@@ -28,11 +30,11 @@ struct Token {
 
 class Lexer {
     std::string_view source;
-    std::vector<Token> tokens;
     int start = 0;
     int cur = 0;
 
 public:
+    std::vector<Token> tokens;  // TODO later make private
     Lexer(std::string_view source) : source(source) {}
     bool EndReached();
     void GetToken();

@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -20,6 +21,19 @@ std::string ReadFile(std::string path){
     return fullSource;
 }
 
+void printTree(Node* node, int depth) {
+    if (!node) {
+        return;
+    }
+
+    for (int i = 0; i < depth; i++) {
+        std::cout << "   ";
+    }
+    std::cout << node->token.lexeme << std::endl;
+    printTree(node->left.get(), depth + 1);
+    printTree(node->right.get(), depth + 1);
+}
+
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
@@ -33,6 +47,10 @@ int main(int argc, char* argv[]) {
         lexer.GetToken();
     }
     lexer.PrintTokens();
+
+    Parser parser(lexer.tokens);
+    std::unique_ptr<Node> node = parser.parseTerm();
+    printTree(node.get(), 0);
 
     return 0;
 }

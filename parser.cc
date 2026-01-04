@@ -25,3 +25,21 @@ bool Parser::match(TokenType type) {
     }
     return false;
 }
+
+std::unique_ptr<Node> Parser::parseFactor() {
+    if (match(TokenType::NUMBER) || match(TokenType::IDENTIFIER)) {
+        return std::make_unique<Node>(previous(), nullptr, nullptr);
+    }
+    // TODO Handle parentheses.
+    throw std::runtime_error("Missing number of identifier");
+}
+
+std::unique_ptr<Node> Parser::parseTerm() {
+    auto left = parseFactor();
+    while (match(TokenType::MULTIPLY) || match(TokenType::DIVIDE)) {
+        Token operation = previous();
+        auto right = parseFactor();
+        left = std::make_unique<Node>(operation, std::move(left), std::move(right));
+    }
+    return left;
+}
