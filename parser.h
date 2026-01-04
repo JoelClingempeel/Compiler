@@ -24,6 +24,7 @@ class Parser {
     Token advance();
     bool endReached();
     bool match(TokenType type);
+    void consume(TokenType type);
 
 public:
     Parser(std::vector<Token> tokens) : tokens(std::move(tokens)) {}

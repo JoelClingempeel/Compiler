@@ -26,11 +26,23 @@ bool Parser::match(TokenType type) {
     return false;
 }
 
+void Parser::consume(TokenType type) {
+    Token token = advance();
+    if (token.type != type) {
+        throw std::runtime_error("Missing )");
+    }
+}
+
 std::unique_ptr<Node> Parser::parseFactor() {
     if (match(TokenType::NUMBER) || match(TokenType::IDENTIFIER)) {
         return std::make_unique<Node>(previous(), nullptr, nullptr);
     }
     // TODO Handle parentheses.
+    if (match(TokenType::LEFT_PAREN)) {
+        auto node = parseExpression();
+        consume(TokenType::RIGHT_PAREN);
+        return node;
+    }
     throw std::runtime_error("Missing number of identifier");
 }
 
