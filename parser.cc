@@ -97,8 +97,7 @@ std::unique_ptr<Node> Parser::parseBraces() {
 
     consume(TokenType::LEFT_BRACE);
     while (peek().type != TokenType::RIGHT_BRACE) {
-        statement_nodes.push_back(parseAssignment());
-        consume(TokenType::SEMICOLON);
+        statement_nodes.push_back(parseStatement());
     }
     consume(TokenType::RIGHT_BRACE);
     return std::make_unique<Node>(token, std::move(statement_nodes));
