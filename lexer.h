@@ -26,6 +26,8 @@ enum class TokenType {
     DOUBLE_EQUALS
 };
 
+std::string_view TokenTypeToString(TokenType type);
+
 struct Token {
     std::string_view lexeme;
     TokenType type;

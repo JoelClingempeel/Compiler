@@ -29,7 +29,9 @@ bool Parser::match(TokenType type) {
 void Parser::consume(TokenType type) {
     Token token = advance();
     if (token.type != type) {
-        throw std::runtime_error("Missing )");
+        std::string error = "Missing ";
+        error += TokenTypeToString(type);
+        throw std::runtime_error(error);
     }
 }
 
