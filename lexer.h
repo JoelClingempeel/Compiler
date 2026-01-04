@@ -13,6 +13,8 @@ enum class TokenType {
     WHILE,
     IDENTIFIER,
     NUMBER,
+    ADD,
+    SUBTRACT,
     MULTIPLY,
     DIVIDE,
     LEFT_PAREN,

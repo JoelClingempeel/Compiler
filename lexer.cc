@@ -8,6 +8,8 @@ std::string_view TokenTypeToString(TokenType type) {
         case TokenType::WHILE:         return "WHILE";
         case TokenType::IDENTIFIER:    return "IDENTIFIER";
         case TokenType::NUMBER:        return "NUMBER";
+        case TokenType::ADD:           return "ADD";
+        case TokenType::SUBTRACT:      return "SUBTRACT";
         case TokenType::MULTIPLY:      return "MULTIPLY";
         case TokenType::DIVIDE:        return "DIVIDE";
         case TokenType::LEFT_PAREN:    return "LEFT_PAREN";
@@ -57,6 +59,16 @@ void Lexer::GetToken(){
         cur++;
     } else {
         switch (source[cur]) {
+            case '+':
+                lexeme = source.substr(start, 1);
+                type = TokenType::ADD;
+                break;
+
+            case '-':
+                lexeme = source.substr(start, 1);
+                type = TokenType::SUBTRACT;
+                break;
+
             case '*':
                 lexeme = source.substr(start, 1);
                 type = TokenType::MULTIPLY;

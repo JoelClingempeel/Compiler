@@ -43,3 +43,13 @@ std::unique_ptr<Node> Parser::parseTerm() {
     }
     return left;
 }
+
+std::unique_ptr<Node> Parser::parseExpression() {
+    auto left = parseTerm();
+    while (match(TokenType::ADD) || match(TokenType::SUBTRACT)) {
+        Token operation = previous();
+        auto right = parseTerm();
+        left = std::make_unique<Node>(operation, std::move(left), std::move(right));
+    }
+    return left;
+}

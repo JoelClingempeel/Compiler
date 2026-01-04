@@ -29,6 +29,7 @@ public:
     Parser(std::vector<Token> tokens) : tokens(std::move(tokens)) {}
     std::unique_ptr<Node> parseFactor();
     std::unique_ptr<Node> parseTerm();
+    std::unique_ptr<Node> parseExpression();
 };
 
 #endif  // PARSER_H

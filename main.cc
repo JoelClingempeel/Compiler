@@ -46,10 +46,9 @@ int main(int argc, char* argv[]) {
     while (!lexer.EndReached()) {
         lexer.GetToken();
     }
-    lexer.PrintTokens();
 
     Parser parser(lexer.tokens);
-    std::unique_ptr<Node> node = parser.parseTerm();
+    std::unique_ptr<Node> node = parser.parseExpression();
     printTree(node.get(), 0);
 
     return 0;
