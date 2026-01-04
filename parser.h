@@ -22,6 +22,15 @@ struct Node {
         : token(token), children(std::move(children)) {}
 };
 
+struct FunctionNode {
+    Token name;
+    std::vector<Token> parameters;
+    std::unique_ptr<Node> body;
+
+    FunctionNode(Token name, std::vector<Token> parameters, std::unique_ptr<Node> body)
+        : name(name), parameters(parameters), body(std::move(body)) {}
+};
+
 class Parser {
     int cur = 0;
     std::vector<Token> tokens;
@@ -44,6 +53,7 @@ public:
     std::unique_ptr<Node> parseIfStatement();
     std::unique_ptr<Node> parseWhileStatement();
     std::unique_ptr<Node> parseStatement();
+    std::unique_ptr<FunctionNode> parseFunction();
 };
 
 #endif  // PARSER_H

@@ -24,7 +24,8 @@ enum class TokenType {
     RIGHT_BRACE,
     EQUALS,
     DOUBLE_EQUALS,
-    FUN
+    FUN,
+    COMMA
 };
 
 std::string_view TokenTypeToString(TokenType type);

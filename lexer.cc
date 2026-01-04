@@ -20,6 +20,7 @@ std::string_view TokenTypeToString(TokenType type) {
         case TokenType::EQUALS:        return "EQUALS";
         case TokenType::DOUBLE_EQUALS: return "DOUBLE_EQUALS";
         case TokenType::FUN:           return "FUN";
+        case TokenType::COMMA:         return "COMMA";
         default:                       return "UNKNOWN_TOKEN";
     }
 }
@@ -116,6 +117,11 @@ void Lexer::GetToken(){
                     lexeme = source.substr(start, 1);
                     type = TokenType::EQUALS;
                 }
+                break;
+
+            case ',':
+                lexeme = source.substr(start, 1);
+                type = TokenType::COMMA;
                 break;
         }
         tokens.push_back({lexeme, type});

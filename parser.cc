@@ -140,3 +140,21 @@ std::unique_ptr<Node> Parser::parseStatement() {
     consume(TokenType::SEMICOLON);
     return out;
 }
+
+std::unique_ptr<FunctionNode> Parser::parseFunction() {
+    consume(TokenType::FUN);
+    consume(TokenType::IDENTIFIER);
+    Token name = previous();
+    consume(TokenType::LEFT_PAREN);
+    std::vector<Token> parameters;
+    while (peek().type != TokenType::RIGHT_PAREN) {
+        consume(TokenType::IDENTIFIER);
+        parameters.push_back(previous());
+        if (peek().type != TokenType::RIGHT_PAREN) {
+            consume(TokenType::COMMA);
+        }
+    }
+    consume(TokenType::RIGHT_PAREN);
+    auto body = parseBraces();
+    return std::make_unique<FunctionNode>(name, parameters, std::move(body));
+}
