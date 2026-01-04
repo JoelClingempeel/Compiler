@@ -41,6 +41,9 @@ public:
     std::unique_ptr<Node> parseExpression();
     std::unique_ptr<Node> parseAssignment();
     std::unique_ptr<Node> parseBraces();
+    std::unique_ptr<Node> parseIfStatement();
+    std::unique_ptr<Node> parseWhileStatement();
+    std::unique_ptr<Node> parseStatement();
 };
 
 #endif  // PARSER_H

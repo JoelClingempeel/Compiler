@@ -103,3 +103,41 @@ std::unique_ptr<Node> Parser::parseBraces() {
     consume(TokenType::RIGHT_BRACE);
     return std::make_unique<Node>(token, std::move(statement_nodes));
 }
+
+std::unique_ptr<Node> Parser::parseIfStatement() {
+    // TODO Add support for else and else-if.
+    if (match(TokenType::IF)) {
+        Token token = previous();
+        consume(TokenType::LEFT_PAREN);
+        auto left = parseExpression();
+        consume(TokenType::RIGHT_PAREN);
+        auto right = parseBraces();
+        return std::make_unique<Node>(token, std::move(left), std::move(right));
+    }
+    throw std::runtime_error("Invalid if statement");
+}
+
+std::unique_ptr<Node> Parser::parseWhileStatement() {
+    if (match(TokenType::WHILE)) {
+        Token token = previous();
+        consume(TokenType::LEFT_PAREN);
+        auto left = parseExpression();
+        consume(TokenType::RIGHT_PAREN);
+        auto right = parseBraces();
+        return std::make_unique<Node>(token, std::move(left), std::move(right));
+    }
+    throw std::runtime_error("Invalid while statement");
+}
+
+std::unique_ptr<Node> Parser::parseStatement() {
+    if (peek().type == TokenType::IF) {
+        return parseIfStatement();
+    } else if (peek().type == TokenType::WHILE) {
+        return parseWhileStatement();
+    } else if (peek().type == TokenType::LEFT_BRACE) {
+        return parseBraces();
+    }
+    auto out = parseAssignment();
+    consume(TokenType::SEMICOLON);
+    return out;
+}
