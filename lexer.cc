@@ -19,6 +19,7 @@ std::string_view TokenTypeToString(TokenType type) {
         case TokenType::RIGHT_BRACE:   return "RIGHT_BRACE";
         case TokenType::EQUALS:        return "EQUALS";
         case TokenType::DOUBLE_EQUALS: return "DOUBLE_EQUALS";
+        case TokenType::FUN:           return "FUN";
         default:                       return "UNKNOWN_TOKEN";
     }
 }
@@ -26,7 +27,8 @@ std::string_view TokenTypeToString(TokenType type) {
 std::unordered_map<std::string_view, TokenType> keywords = {
     {"if", TokenType::IF},
     {"else", TokenType::ELSE},
-    {"while", TokenType::WHILE}
+    {"while", TokenType::WHILE},
+    {"fun", TokenType::FUN}
 };
 
 bool Lexer::EndReached() {
