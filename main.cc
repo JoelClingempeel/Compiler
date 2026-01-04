@@ -30,8 +30,9 @@ void printTree(Node* node, int depth) {
         std::cout << "   ";
     }
     std::cout << node->token.lexeme << std::endl;
-    printTree(node->left.get(), depth + 1);
-    printTree(node->right.get(), depth + 1);
+    for (const auto& child : node->children) {
+        printTree(child.get(), depth + 1);
+    }
 }
 
 int main(int argc, char* argv[]) {

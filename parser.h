@@ -1,18 +1,25 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include <memory>
+#include <vector>
+
 #include "lexer.h"
-#include "memory.h"
 #include "parser.h"
 
 
 struct Node {
     Token token;
-    std::unique_ptr<Node> left;
-    std::unique_ptr<Node> right;
+    std::vector<std::unique_ptr<Node>> children;
 
     Node(Token token, std::unique_ptr<Node> left, std::unique_ptr<Node> right)
-        : token(token), left(std::move(left)), right(std::move(right)) {}
+        : token(token) {
+        children.push_back(std::move(left));
+        children.push_back(std::move(right));
+    }
+
+    Node(Token token, std::vector<std::unique_ptr<Node>> children)
+        : token(token), children(std::move(children)) {}
 };
 
 class Parser {
