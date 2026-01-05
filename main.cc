@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 
+#include "code_gen.h"
 #include "lexer.h"
 #include "parser.h"
 
@@ -65,5 +66,9 @@ int main(int argc, char* argv[]) {
         printFunction(func_node_ptr.get());
         std::cout << "============" << std::endl;
     }
+
+    // std::unique_ptr<Node> node_ptr = parser.parseExpression();
+    // CodeGen cg;
+    // std::cout << cg.EvaluateExpression(node_ptr.get(), 0) << std::endl;
     return 0;
 }
