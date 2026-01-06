@@ -57,8 +57,6 @@ std::string CodeGen::EvaluateLValue(Node* node) {
     auto lexeme = std::string(token.lexeme);
     std::ostringstream sstream;
     if (token.type == TokenType::IDENTIFIER) {
-        std::string out_reg = SCRATCH_REGS[reg_index];  // Need this?
-        reg_index++;  // Need this?
         if (var_offsets.find(lexeme) == var_offsets.end()) {
             // New variable
             total_offset += 8;
