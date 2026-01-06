@@ -2,7 +2,7 @@
 
 
 std::vector<std::string> SCRATCH_REGS = {"r8", "r9", "r10", "r11", "r12",
-                                         "r13", "r14", "r15"};
+                                         "r13", "r14", "r15", "rax", "rbx"};
 
 std::string asm_prefix = R"(
 bits 64
@@ -38,12 +38,13 @@ std::string CodeGen::EvaluateExpression(Node* node) {
             // New variable
             total_offset += 8;
             var_offsets[lexeme] = total_offset;
+            return std::to_string(total_offset);
         } else {
             // Existing variable
-            sstream << "mov " << out_reg << ", [rsp + " << var_offsets[lexeme] << "]\n";
+            sstream << "mov " << out_reg << ", [rbp - " << var_offsets[lexeme] << "]\n";
             code += sstream.str();
+            return out_reg;
         }
-        return out_reg;
     } else if (token.type == TokenType::ADD) {
         std::string left_reg = EvaluateExpression(node->children[0].get());
         std::string right_reg = EvaluateExpression(node->children[1].get());
@@ -51,11 +52,18 @@ std::string CodeGen::EvaluateExpression(Node* node) {
         code += sstream.str();
         return left_reg;
     } else if (token.type == TokenType::EQUALS) {
-        std::string var = std::string(node->children[0].get()->token.lexeme);
-        int offset = var_offsets[var];
+        std::string offset_str = EvaluateExpression(node->children[0].get());
+        // std::string offset_str = "?";
+
         std::string reg = EvaluateExpression(node->children[1].get());
-        sstream << "mov [rbp - " << offset << "], " << reg << "\n";
+        sstream << "mov [rbp - " << offset_str << "], " << reg << "\n";
         code += sstream.str();
+        return "";
+    } else if (token.type == TokenType::LEFT_BRACE) {
+        for (const auto& child : node->children) {
+            EvaluateExpression(child.get());
+        }
+        reg_index = 0;
         return "";
     } else {
         throw std::runtime_error("Unsupported node");

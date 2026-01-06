@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
     //     std::cout << "============" << std::endl;
     // }
 
-    std::unique_ptr<Node> node_ptr = parser.parseAssignment();
+    std::unique_ptr<Node> node_ptr = parser.parseBraces();
     CodeGen cg;
     cg.EvaluateExpression(node_ptr.get());
     std::cout << cg.GetCode();
