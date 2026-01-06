@@ -21,7 +21,7 @@ mov rdi, 0
 syscall
 )";
 
-std::string CodeGen::EvaluateExpression(Node* node) {
+std::string CodeGen::EvaluateRValue(Node* node) {
     Token token = node->token;
     auto lexeme = std::string(token.lexeme);
     std::ostringstream sstream;
@@ -35,37 +35,65 @@ std::string CodeGen::EvaluateExpression(Node* node) {
         std::string out_reg = SCRATCH_REGS[reg_index];
         reg_index++;
         if (var_offsets.find(lexeme) == var_offsets.end()) {
-            // New variable
-            total_offset += 8;
-            var_offsets[lexeme] = total_offset;
-            return std::to_string(total_offset);
-        } else {
-            // Existing variable
-            sstream << "mov " << out_reg << ", [rbp - " << var_offsets[lexeme] << "]\n";
-            code += sstream.str();
-            return out_reg;
+            throw std::runtime_error("Variable used before assignment");
         }
+        // Existing variable
+        sstream << "mov " << out_reg << ", [rbp - " << var_offsets[lexeme] << "]\n";
+        code += sstream.str();
+        return out_reg;
     } else if (token.type == TokenType::ADD) {
-        std::string left_reg = EvaluateExpression(node->children[0].get());
-        std::string right_reg = EvaluateExpression(node->children[1].get());
+        std::string left_reg = EvaluateRValue(node->children[0].get());
+        std::string right_reg = EvaluateRValue(node->children[1].get());
         sstream << "add " << left_reg << ", " << right_reg << "\n";
         code += sstream.str();
         return left_reg;
-    } else if (token.type == TokenType::EQUALS) {
-        std::string offset_str = EvaluateExpression(node->children[0].get());
-        std::string reg = EvaluateExpression(node->children[1].get());
+    } else {
+        throw std::runtime_error("Unsupported RValue");
+    }
+}
+
+std::string CodeGen::EvaluateLValue(Node* node) {
+    Token token = node->token;
+    auto lexeme = std::string(token.lexeme);
+    std::ostringstream sstream;
+    if (token.type == TokenType::IDENTIFIER) {
+        std::string out_reg = SCRATCH_REGS[reg_index];  // Need this?
+        reg_index++;  // Need this?
+        if (var_offsets.find(lexeme) == var_offsets.end()) {
+            // New variable
+            total_offset += 8;
+            var_offsets[lexeme] = total_offset;
+        }
+        return std::to_string(var_offsets[lexeme]);
+    } else {
+        throw std::runtime_error("Expected identifier for LValue");
+    }
+}
+
+std::string CodeGen::EvaluateAssignment(Node* node) {
+    Token token = node->token;
+    auto lexeme = std::string(token.lexeme);
+    std::ostringstream sstream;
+    if (token.type == TokenType::EQUALS) {
+        std::string offset_str = EvaluateLValue(node->children[0].get());
+        std::string reg = EvaluateRValue(node->children[1].get());
         sstream << "mov [rbp - " << offset_str << "], " << reg << "\n";
         code += sstream.str();
         return "";
-    } else if (token.type == TokenType::LEFT_BRACE) {
-        for (const auto& child : node->children) {
-            EvaluateExpression(child.get());
-            reg_index = 0;
-        }
-        return "";
     } else {
-        throw std::runtime_error("Unsupported node");
+        throw std::runtime_error("Expected =");
     }
+}
+
+std::string CodeGen::EvaluateStatements(Node* node) {
+    Token token = node->token;
+    auto lexeme = std::string(token.lexeme);
+    std::ostringstream sstream;
+    for (const auto& child : node->children) {
+        EvaluateAssignment(child.get());
+        reg_index = 0;
+    }
+    return "";
 }
 
 std::string CodeGen::GetCode() {

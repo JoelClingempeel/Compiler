@@ -16,7 +16,10 @@ class CodeGen {
     std::string code = "";
 
 public:
-    std::string EvaluateExpression(Node* node);
+    std::string EvaluateRValue(Node* node);
+    std::string EvaluateLValue(Node* node);
+    std::string EvaluateAssignment(Node* node);
+    std::string EvaluateStatements(Node* node);
     std::string GetCode();
 };
 
