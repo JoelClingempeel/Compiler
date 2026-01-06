@@ -61,14 +61,15 @@ int main(int argc, char* argv[]) {
     }
 
     Parser parser(lexer.tokens);
-    std::vector<std::unique_ptr<FunctionNode>> func_node_ptrs = parser.parseProgram();
-    for (const auto& func_node_ptr : func_node_ptrs) {
-        printFunction(func_node_ptr.get());
-        std::cout << "============" << std::endl;
-    }
+    // std::vector<std::unique_ptr<FunctionNode>> func_node_ptrs = parser.parseProgram();
+    // for (const auto& func_node_ptr : func_node_ptrs) {
+    //     printFunction(func_node_ptr.get());
+    //     std::cout << "============" << std::endl;
+    // }
 
-    // std::unique_ptr<Node> node_ptr = parser.parseExpression();
-    // CodeGen cg;
-    // std::cout << cg.EvaluateExpression(node_ptr.get(), 0) << std::endl;
+    std::unique_ptr<Node> node_ptr = parser.parseAssignment();
+    CodeGen cg;
+    cg.EvaluateExpression(node_ptr.get());
+    std::cout << cg.code;
     return 0;
 }
