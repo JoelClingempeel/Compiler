@@ -13,10 +13,11 @@ class CodeGen {
     std::unordered_map<std::string, int> var_offsets;
     int total_offset = 0;
     int reg_index = 0;
+    std::string code = "";
 
 public:
-    std::string code = "";
     std::string EvaluateExpression(Node* node);
+    std::string GetCode();
 };
 
 #endif  // CODE_GEN_H

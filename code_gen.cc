@@ -4,6 +4,23 @@
 std::vector<std::string> SCRATCH_REGS = {"r8", "r9", "r10", "r11", "r12",
                                          "r13", "r14", "r15"};
 
+std::string asm_prefix = R"(
+bits 64
+section .text
+global _main
+
+_main:
+push rbp
+mov rbp, rsp
+sub rsp, A
+)";
+
+std::string asm_postfix = R"(
+mov rax, 0x02000001  ; sysexit
+mov rdi, 0
+syscall
+)";
+
 std::string CodeGen::EvaluateExpression(Node* node) {
     Token token = node->token;
     auto lexeme = std::string(token.lexeme);
@@ -43,4 +60,10 @@ std::string CodeGen::EvaluateExpression(Node* node) {
     } else {
         throw std::runtime_error("Unsupported node");
     }
+}
+
+std::string CodeGen::GetCode() {
+    std::string offset_str = std::to_string(total_offset);
+    std::string modified_asm_prefix = asm_prefix.replace(asm_prefix.size() - 2, 1, offset_str);
+    return modified_asm_prefix + "\n" + code + asm_postfix;
 }

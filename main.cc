@@ -70,6 +70,6 @@ int main(int argc, char* argv[]) {
     std::unique_ptr<Node> node_ptr = parser.parseAssignment();
     CodeGen cg;
     cg.EvaluateExpression(node_ptr.get());
-    std::cout << cg.code;
+    std::cout << cg.GetCode();
     return 0;
 }
