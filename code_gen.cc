@@ -47,6 +47,27 @@ std::string CodeGen::EvaluateRValue(Node* node) {
         sstream << "add " << left_reg << ", " << right_reg << "\n";
         code += sstream.str();
         return left_reg;
+    } else if (token.type == TokenType::SUBTRACT) {
+        std::string left_reg = EvaluateRValue(node->children[0].get());
+        std::string right_reg = EvaluateRValue(node->children[1].get());
+        sstream << "sub " << left_reg << ", " << right_reg << "\n";
+        code += sstream.str();
+        return left_reg;
+    }  else if (token.type == TokenType::MULTIPLY) {
+        std::string left_reg = EvaluateRValue(node->children[0].get());
+        std::string right_reg = EvaluateRValue(node->children[1].get());
+        sstream << "imul " << left_reg << ", " << right_reg << "\n";
+        code += sstream.str();
+        return left_reg;
+    }  else if (token.type == TokenType::DIVIDE) {
+        std::string left_reg = EvaluateRValue(node->children[0].get());
+        std::string right_reg = EvaluateRValue(node->children[1].get());
+        sstream << "mov rax, " << left_reg << "\n";
+        sstream << "cqo\n";
+        sstream << "idiv " << right_reg << "\n";
+        sstream << "mov " << left_reg << ", rax\n";
+        code += sstream.str();
+        return left_reg;
     } else {
         throw std::runtime_error("Unsupported RValue");
     }
