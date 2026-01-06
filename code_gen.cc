@@ -53,8 +53,6 @@ std::string CodeGen::EvaluateExpression(Node* node) {
         return left_reg;
     } else if (token.type == TokenType::EQUALS) {
         std::string offset_str = EvaluateExpression(node->children[0].get());
-        // std::string offset_str = "?";
-
         std::string reg = EvaluateExpression(node->children[1].get());
         sstream << "mov [rbp - " << offset_str << "], " << reg << "\n";
         code += sstream.str();
