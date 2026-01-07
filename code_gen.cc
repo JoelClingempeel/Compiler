@@ -4,6 +4,14 @@
 std::vector<std::string> SCRATCH_REGS = {"r8", "r9", "r10", "r11", "r12",
                                          "r13", "r14", "r15"};
 
+std::unordered_map<TokenType, std::string> COMPARISONS = {
+    {TokenType::DOUBLE_EQUALS, "sete"},
+    {TokenType::LESS, "setl"},
+    {TokenType::LESS_EQUALS, "setle"},
+    {TokenType::GREATER, "setg"},
+    {TokenType::GREATER_EQUALS, "setge"},
+};
+
 std::string asm_prefix = R"(
 bits 64
 section .text
@@ -112,6 +120,14 @@ std::string CodeGen::EvaluateRValue(Node* node) {
         sstream << "cqo\n";
         sstream << "idiv " << right_reg << "\n";
         sstream << "mov " << left_reg << ", rax\n";
+        code += sstream.str();
+        return left_reg;
+    } else if (COMPARISONS.find(token.type) != COMPARISONS.end()) {
+        std::string left_reg = EvaluateRValue(node->children[0].get());
+        std::string right_reg = EvaluateRValue(node->children[1].get());
+        sstream << "cmp " << left_reg << ", " << right_reg << "\n";
+        sstream << COMPARISONS[token.type] << " al\n";
+        sstream << "movzx " << left_reg << ", al\n";
         code += sstream.str();
         return left_reg;
     } else {
