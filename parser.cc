@@ -77,12 +77,24 @@ std::unique_ptr<Node> Parser::parseExpression() {
     return left;
 }
 
-std::unique_ptr<Node> Parser::parseAssignment() {
+std::unique_ptr<Node> Parser::parseComparison() {
     auto left = parseExpression();
+    if (match(TokenType::LESS) || match(TokenType::LESS_EQUALS)
+        || match(TokenType::GREATER) || match(TokenType::GREATER_EQUALS)
+        || match(TokenType::DOUBLE_EQUALS)) {
+        Token operation = previous();
+        auto right = parseExpression();
+        return std::make_unique<Node>(operation, std::move(left), std::move(right));
+    } 
+    return left;
+}
+
+std::unique_ptr<Node> Parser::parseAssignment() {
+    auto left = parseComparison();
     if (match(TokenType::EQUALS)) {
         if (left->token.type == TokenType::IDENTIFIER) {
             Token operation = previous();
-            auto right = parseExpression();
+            auto right = parseComparison();
             return std::make_unique<Node>(operation, std::move(left), std::move(right));
         } else {
             throw std::runtime_error("Invalid assignment");

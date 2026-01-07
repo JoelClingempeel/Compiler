@@ -48,6 +48,7 @@ public:
     std::unique_ptr<Node> parseUnary();
     std::unique_ptr<Node> parseTerm();
     std::unique_ptr<Node> parseExpression();
+    std::unique_ptr<Node> parseComparison();
     std::unique_ptr<Node> parseAssignment();
     std::unique_ptr<Node> parseBraces();
     std::unique_ptr<Node> parseIfStatement();
