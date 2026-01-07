@@ -21,6 +21,7 @@ public:
     std::string EvaluateLValue(Node* node);
     std::string EvaluateAssignment(Node* node);
     std::string EvaluateStatements(Node* node);
+    std::string EvaluateIfStatement(Node* node);
     std::string EvaluateWhileLoop(Node* node);
     std::string GetCode();
 };
