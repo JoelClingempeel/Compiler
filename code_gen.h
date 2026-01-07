@@ -23,6 +23,7 @@ public:
     std::string EvaluateStatements(Node* node);
     std::string EvaluateIfStatement(Node* node);
     std::string EvaluateWhileLoop(Node* node);
+    void EvaluateFunction(FunctionNode* node);
     std::string GetCode();
 };
 

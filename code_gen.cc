@@ -220,8 +220,34 @@ std::string CodeGen::EvaluateStatements(Node* node) {
     return "";
 }
 
+// TODO:
+// 1. Get correct stack size instead of using large buffer.
+// 2. Get return value.
+void CodeGen::EvaluateFunction(FunctionNode* node) {
+    std::ostringstream sstream;
+    sstream << "_" << node->name.lexeme << ":\n";
+    sstream << "push rbp\n";
+    sstream << "mov rbp, rsp\n";
+    sstream << "sub rsp, 128\n";
+    for (int i = 0; i < node->parameters.size(); i++) {
+        int var_offset = 8 * (i + 1);
+        sstream << "mov [rbp - " << var_offset << "], " << SCRATCH_REGS[i] << "\n";
+        std::string var_name = std::string(node->parameters[i].lexeme);
+        var_offsets[var_name] = var_offset;
+        total_offset += 8;
+    }
+    code += sstream.str();
+    sstream.str("");
+    EvaluateStatements(node->body.get());
+    sstream << "mov rsp, rbp\n";
+    sstream << "pop rbp\n";
+    sstream << "ret\n";
+    code += sstream.str();
+}
+
 std::string CodeGen::GetCode() {
-    std::string offset_str = std::to_string(total_offset);
-    std::string modified_asm_prefix = asm_prefix.replace(asm_prefix.size() - 2, 1, offset_str);
-    return modified_asm_prefix + "\n" + code + asm_postfix;
+    return code;
+    // std::string offset_str = std::to_string(total_offset);
+    // std::string modified_asm_prefix = asm_prefix.replace(asm_prefix.size() - 2, 1, offset_str);
+    // return modified_asm_prefix + "\n" + code + asm_postfix;
 }
