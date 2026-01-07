@@ -28,6 +28,7 @@ enum class TokenType {
     GREATER,
     GREATER_EQUALS,
     DOUBLE_EQUALS,
+    NOT_EQUALS,
     FUN,
     COMMA
 };

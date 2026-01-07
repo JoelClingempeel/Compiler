@@ -10,6 +10,7 @@ std::unordered_map<TokenType, std::string> COMPARISONS = {
     {TokenType::LESS_EQUALS, "setle"},
     {TokenType::GREATER, "setg"},
     {TokenType::GREATER_EQUALS, "setge"},
+    {TokenType::NOT_EQUALS, "setne"}
 };
 
 std::string asm_prefix = R"(

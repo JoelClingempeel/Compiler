@@ -23,6 +23,7 @@ std::string_view TokenTypeToString(TokenType type) {
         case TokenType::GREATER:        return "GREATER";
         case TokenType::GREATER_EQUALS: return "GREATER_EQUALS";
         case TokenType::DOUBLE_EQUALS:  return "DOUBLE_EQUALS";
+        case TokenType::NOT_EQUALS:     return "NOT_EQUALS";
         case TokenType::FUN:            return "FUN";
         case TokenType::COMMA:          return "COMMA";
         default:                        return "UNKNOWN_TOKEN";
@@ -142,6 +143,14 @@ void Lexer::GetToken(){
                 } else {
                     lexeme = source.substr(start, 1);
                     type = TokenType::GREATER;
+                }
+                break;
+            
+             case '!':
+                if (cur + 1 < source.size() && source[cur + 1] == '=') {
+                    lexeme = source.substr(start, 2);
+                    type = TokenType::NOT_EQUALS;
+                    cur++;
                 }
                 break;
 

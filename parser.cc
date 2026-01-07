@@ -81,7 +81,7 @@ std::unique_ptr<Node> Parser::parseComparison() {
     auto left = parseExpression();
     if (match(TokenType::LESS) || match(TokenType::LESS_EQUALS)
         || match(TokenType::GREATER) || match(TokenType::GREATER_EQUALS)
-        || match(TokenType::DOUBLE_EQUALS)) {
+        || match(TokenType::DOUBLE_EQUALS) || match(TokenType::NOT_EQUALS)) {
         Token operation = previous();
         auto right = parseExpression();
         return std::make_unique<Node>(operation, std::move(left), std::move(right));
