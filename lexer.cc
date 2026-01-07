@@ -3,25 +3,29 @@
 
 std::string_view TokenTypeToString(TokenType type) {
     switch (type) {
-        case TokenType::IF:            return "IF";
-        case TokenType::ELSE:          return "ELSE";
-        case TokenType::WHILE:         return "WHILE";
-        case TokenType::IDENTIFIER:    return "IDENTIFIER";
-        case TokenType::NUMBER:        return "NUMBER";
-        case TokenType::ADD:           return "ADD";
-        case TokenType::SUBTRACT:      return "SUBTRACT";
-        case TokenType::MULTIPLY:      return "MULTIPLY";
-        case TokenType::DIVIDE:        return "DIVIDE";
-        case TokenType::SEMICOLON:     return "SEMICOLON";
-        case TokenType::LEFT_PAREN:    return "LEFT_PAREN";
-        case TokenType::RIGHT_PAREN:   return "RIGHT_PAREN";
-        case TokenType::LEFT_BRACE:    return "LEFT_BRACE";
-        case TokenType::RIGHT_BRACE:   return "RIGHT_BRACE";
-        case TokenType::EQUALS:        return "EQUALS";
-        case TokenType::DOUBLE_EQUALS: return "DOUBLE_EQUALS";
-        case TokenType::FUN:           return "FUN";
-        case TokenType::COMMA:         return "COMMA";
-        default:                       return "UNKNOWN_TOKEN";
+        case TokenType::IF:             return "IF";
+        case TokenType::ELSE:           return "ELSE";
+        case TokenType::WHILE:          return "WHILE";
+        case TokenType::IDENTIFIER:     return "IDENTIFIER";
+        case TokenType::NUMBER:         return "NUMBER";
+        case TokenType::ADD:            return "ADD";
+        case TokenType::SUBTRACT:       return "SUBTRACT";
+        case TokenType::MULTIPLY:       return "MULTIPLY";
+        case TokenType::DIVIDE:         return "DIVIDE";
+        case TokenType::SEMICOLON:      return "SEMICOLON";
+        case TokenType::LEFT_PAREN:     return "LEFT_PAREN";
+        case TokenType::RIGHT_PAREN:    return "RIGHT_PAREN";
+        case TokenType::LEFT_BRACE:     return "LEFT_BRACE";
+        case TokenType::RIGHT_BRACE:    return "RIGHT_BRACE";
+        case TokenType::EQUALS:         return "EQUALS";
+        case TokenType::LESS:           return "LESS";
+        case TokenType::LESS_EQUALS:    return "LESS_EQUALS";
+        case TokenType::GREATER:        return "GREATER";
+        case TokenType::GREATER_EQUALS: return "GREATER_EQUALS";
+        case TokenType::DOUBLE_EQUALS:  return "DOUBLE_EQUALS";
+        case TokenType::FUN:            return "FUN";
+        case TokenType::COMMA:          return "COMMA";
+        default:                        return "UNKNOWN_TOKEN";
     }
 }
 
@@ -116,6 +120,28 @@ void Lexer::GetToken(){
                 } else {
                     lexeme = source.substr(start, 1);
                     type = TokenType::EQUALS;
+                }
+                break;
+
+            case '<':
+                if (cur + 1 < source.size() && source[cur + 1] == '=') {
+                    lexeme = source.substr(start, 2);
+                    type = TokenType::LESS_EQUALS;
+                    cur++;
+                } else {
+                    lexeme = source.substr(start, 1);
+                    type = TokenType::LESS;
+                }
+                break;
+
+            case '>':
+                if (cur + 1 < source.size() && source[cur + 1] == '=') {
+                    lexeme = source.substr(start, 2);
+                    type = TokenType::GREATER_EQUALS;
+                    cur++;
+                } else {
+                    lexeme = source.substr(start, 1);
+                    type = TokenType::GREATER;
                 }
                 break;
 

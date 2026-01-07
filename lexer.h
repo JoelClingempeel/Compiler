@@ -23,6 +23,10 @@ enum class TokenType {
     LEFT_BRACE,
     RIGHT_BRACE,
     EQUALS,
+    LESS,
+    LESS_EQUALS,
+    GREATER,
+    GREATER_EQUALS,
     DOUBLE_EQUALS,
     FUN,
     COMMA
