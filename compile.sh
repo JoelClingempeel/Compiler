@@ -1,0 +1,5 @@
+BASE="${1%.*}"
+./compile "$BASE.txt" > "$BASE.asm"
+nasm -f macho64 "$BASE.asm" -o "$BASE.o"
+gcc "$BASE.o" -o "$BASE.bin"
+rm "$BASE.asm" "$BASE.o"
