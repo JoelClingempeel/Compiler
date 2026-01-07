@@ -9,6 +9,45 @@ bits 64
 section .text
 global _main
 
+_print:
+    xor rcx, rcx
+    mov rbx, 10
+_print_loop:
+    xor rdx, rdx
+    div rbx
+    add dl, '0'
+    lea r8, [rel _buffer]
+    mov [r8 + rcx], dl
+    inc rcx
+    test rax, rax
+    jnz _print_loop
+    mov r9, rcx
+    lea rdi, [rel _buffer]
+    lea rsi, [rel _buffer]
+    add rsi, rcx
+    dec rsi
+_reverse_loop:
+    cmp rdi, rsi
+    jae _append_newline
+    mov al, [rdi]
+    mov bl, [rsi]
+    mov [rdi], bl
+    mov [rsi], al
+    inc rdi
+    dec rsi
+    jmp _reverse_loop
+_append_newline:
+    lea r8, [rel _buffer]
+    mov byte [r8 + r9], 10
+    inc r9
+_do_print:
+    mov rax, 0x2000004
+    mov rdi, 1
+    lea rsi, [rel _buffer]
+    mov rdx, r9
+    syscall
+    ret
+
 _main:
 push rbp
 mov rbp, rsp
@@ -16,9 +55,16 @@ sub rsp, A
 )";
 
 std::string asm_postfix = R"(
+mov rax, [rbp - 8]
+call _print
+
 mov rax, 0x02000001  ; sysexit
 mov rdi, 0
 syscall
+
+section .data
+_buffer:
+    times 21 db 0
 )";
 
 std::string CodeGen::EvaluateRValue(Node* node) {
