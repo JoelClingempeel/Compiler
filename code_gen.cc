@@ -104,12 +104,36 @@ std::string CodeGen::EvaluateAssignment(Node* node) {
     }
 }
 
+std::string CodeGen::EvaluateWhileLoop(Node* node) {
+    Token token = node->token;
+    auto lexeme = std::string(token.lexeme);
+    std::ostringstream sstream;
+    sstream << "_label" << next_label_index << ":\n";
+    code += sstream.str();
+    sstream.str("");
+    std::string cond_reg = EvaluateRValue(node->children[0].get());
+    sstream << "cmp " << cond_reg << ", 0\n";
+    sstream << "je _label" << next_label_index + 1 << "\n";
+    code += sstream.str();
+    sstream.str("");
+    EvaluateStatements(node->children[1].get());
+    sstream << "jmp _label" << next_label_index << "\n";
+    sstream << "_label" << next_label_index + 1 << ":\n";
+    code += sstream.str();
+    next_label_index += 2;
+    return "";
+}
+
 std::string CodeGen::EvaluateStatements(Node* node) {
     Token token = node->token;
     auto lexeme = std::string(token.lexeme);
     std::ostringstream sstream;
     for (const auto& child : node->children) {
-        EvaluateAssignment(child.get());
+        if (child->token.type == TokenType::EQUALS) {
+            EvaluateAssignment(child.get());
+        } else if (child->token.type == TokenType::WHILE) {
+            EvaluateWhileLoop(child.get());
+        }
         reg_index = 0;
     }
     return "";

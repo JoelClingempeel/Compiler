@@ -14,12 +14,14 @@ class CodeGen {
     int total_offset = 0;
     int reg_index = 0;
     std::string code = "";
+    int next_label_index = 0;
 
 public:
     std::string EvaluateRValue(Node* node);
     std::string EvaluateLValue(Node* node);
     std::string EvaluateAssignment(Node* node);
     std::string EvaluateStatements(Node* node);
+    std::string EvaluateWhileLoop(Node* node);
     std::string GetCode();
 };
 
