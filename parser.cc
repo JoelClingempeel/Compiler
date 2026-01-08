@@ -36,10 +36,24 @@ void Parser::consume(TokenType type) {
 }
 
 std::unique_ptr<Node> Parser::parseFactor() {
-    if (match(TokenType::NUMBER) || match(TokenType::IDENTIFIER)) {
+    if (match(TokenType::NUMBER)) {
         return std::make_unique<Node>(previous(), nullptr, nullptr);
+    } else if (match(TokenType::IDENTIFIER)) {
+        // Get inputs for function call.
+        Token func_identifier = previous();
+        if (match(TokenType::LEFT_PAREN)) {
+            std::vector<std::unique_ptr<Node>> parameters;
+            while (peek().type != TokenType::RIGHT_PAREN) {
+                parameters.push_back(parseExpression());
+                if (peek().type != TokenType::RIGHT_PAREN) {
+                    consume(TokenType::COMMA);
+                }
+            }
+            consume(TokenType::RIGHT_PAREN);
+            return std::make_unique<Node>(func_identifier, std::move(parameters));
+        }
+        return std::make_unique<Node>(previous(), nullptr, nullptr); 
     }
-    // TODO Handle parentheses.
     if (match(TokenType::LEFT_PAREN)) {
         auto node = parseExpression();
         consume(TokenType::RIGHT_PAREN);
