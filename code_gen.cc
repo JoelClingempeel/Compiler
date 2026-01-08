@@ -233,9 +233,7 @@ std::string CodeGen::EvaluateStatements(Node* node) {
     return "";
 }
 
-// TODO:
-// 1. Get correct stack size instead of using large buffer.
-// 2. Get return value.
+// TODO: Get correct stack size instead of using large buffer.
 void CodeGen::EvaluateFunction(FunctionNode* node) {
     std::ostringstream sstream;
     function_name = std::string(node->name.lexeme);

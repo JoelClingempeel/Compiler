@@ -55,27 +55,22 @@ int main(int argc, char* argv[]) {
 
     std::string source = ReadFile(argv[1]);
 
+    // Step 1: Lexing
     Lexer lexer(source);
     while (!lexer.EndReached()) {
         lexer.GetToken();
     }
 
+    // Step 2: Parsing
     Parser parser(lexer.tokens);
-    // std::vector<std::unique_ptr<FunctionNode>> func_node_ptrs = parser.parseProgram();
-    // for (const auto& func_node_ptr : func_node_ptrs) {
-    //     printFunction(func_node_ptr.get());
-    //     std::cout << "============" << std::endl;
-    // }
-
-    // std::unique_ptr<Node> node_ptr = parser.parseBraces();
-    // std::unique_ptr<FunctionNode> node_ptr = parser.parseFunction();
-    // printFunction(node_ptr.get());
     std::vector<std::unique_ptr<FunctionNode>> func_nodes = parser.parseProgram();
+
+    // Step 3: Code Generation
     CodeGen cg;
     for (auto& func_node : func_nodes) {
         cg.EvaluateFunction(func_node.get());
     }
-    // cg.EvaluateStatements(node_ptr.get());
     std::cout << cg.GetCode();
+
     return 0;
 }
