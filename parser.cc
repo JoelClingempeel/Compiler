@@ -120,7 +120,7 @@ std::unique_ptr<Node> Parser::parseIfStatement() {
     if (match(TokenType::IF)) {
         Token token = previous();
         consume(TokenType::LEFT_PAREN);
-        auto left = parseExpression();
+        auto left = parseComparison();
         consume(TokenType::RIGHT_PAREN);
         auto right = parseBraces();
         return std::make_unique<Node>(token, std::move(left), std::move(right));
@@ -132,7 +132,7 @@ std::unique_ptr<Node> Parser::parseWhileStatement() {
     if (match(TokenType::WHILE)) {
         Token token = previous();
         consume(TokenType::LEFT_PAREN);
-        auto left = parseExpression();
+        auto left = parseComparison();
         consume(TokenType::RIGHT_PAREN);
         auto right = parseBraces();
         return std::make_unique<Node>(token, std::move(left), std::move(right));
