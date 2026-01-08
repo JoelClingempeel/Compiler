@@ -30,7 +30,8 @@ enum class TokenType {
     DOUBLE_EQUALS,
     NOT_EQUALS,
     FUN,
-    COMMA
+    COMMA,
+    RETURN
 };
 
 std::string_view TokenTypeToString(TokenType type);

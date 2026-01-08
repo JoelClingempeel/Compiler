@@ -140,11 +140,25 @@ std::unique_ptr<Node> Parser::parseWhileStatement() {
     throw std::runtime_error("Invalid while statement");
 }
 
+std::unique_ptr<Node> Parser::parseReturnStatement() {
+    if (match(TokenType::RETURN)) {
+        std::cout << "handling return\n";
+        Token token = previous();
+        std::cout << "lexeme " << token.lexeme;
+        auto child = parseComparison();
+        consume(TokenType::SEMICOLON);
+        return std::make_unique<Node>(token, std::move(child), nullptr);
+    }
+    throw std::runtime_error("Invalid return statement");
+}
+
 std::unique_ptr<Node> Parser::parseStatement() {
     if (peek().type == TokenType::IF) {
         return parseIfStatement();
     } else if (peek().type == TokenType::WHILE) {
         return parseWhileStatement();
+    } else if (peek().type == TokenType::RETURN) {
+        return parseReturnStatement();
     } else if (peek().type == TokenType::LEFT_BRACE) {
         return parseBraces();
     }

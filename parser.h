@@ -53,6 +53,7 @@ public:
     std::unique_ptr<Node> parseBraces();
     std::unique_ptr<Node> parseIfStatement();
     std::unique_ptr<Node> parseWhileStatement();
+    std::unique_ptr<Node> parseReturnStatement();
     std::unique_ptr<Node> parseStatement();
     std::unique_ptr<FunctionNode> parseFunction();
     std::vector<std::unique_ptr<FunctionNode>> parseProgram();
