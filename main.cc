@@ -68,11 +68,14 @@ int main(int argc, char* argv[]) {
     // }
 
     // std::unique_ptr<Node> node_ptr = parser.parseBraces();
-    std::unique_ptr<FunctionNode> node_ptr = parser.parseFunction();
-    printFunction(node_ptr.get());
+    // std::unique_ptr<FunctionNode> node_ptr = parser.parseFunction();
+    // printFunction(node_ptr.get());
+    std::vector<std::unique_ptr<FunctionNode>> func_nodes = parser.parseProgram();
     CodeGen cg;
+    for (auto& func_node : func_nodes) {
+        cg.EvaluateFunction(func_node.get());
+    }
     // cg.EvaluateStatements(node_ptr.get());
-    cg.EvaluateFunction(node_ptr.get());
     std::cout << cg.GetCode();
     return 0;
 }

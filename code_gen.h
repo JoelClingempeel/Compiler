@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 #include "lexer.h"
 #include "parser.h"
@@ -16,6 +18,7 @@ class CodeGen {
     std::string code = "";
     int next_label_index = 0;
     std::string function_name = "";
+    std::unordered_set<std::string> functions;
 
 public:
     std::string EvaluateRValue(Node* node);

@@ -4,6 +4,8 @@
 std::vector<std::string> SCRATCH_REGS = {"r8", "r9", "r10", "r11", "r12",
                                          "r13", "r14", "r15"};
 
+std::vector<std::string> FUNC_CALL_REGS = {"rax", "rbx", "rcx", "rdx"};
+
 std::unordered_map<TokenType, std::string> COMPARISONS = {
     {TokenType::DOUBLE_EQUALS, "sete"},
     {TokenType::LESS, "setl"},
@@ -57,19 +59,9 @@ _do_print:
     syscall
     ret
 
-_main:
-push rbp
-mov rbp, rsp
-sub rsp, A
 )";
 
 std::string asm_postfix = R"(
-mov rax, [rbp - 8]
-call _print
-
-mov rax, 0x02000001  ; sysexit
-mov rdi, 0
-syscall
 
 section .data
 _buffer:
@@ -89,11 +81,21 @@ std::string CodeGen::EvaluateRValue(Node* node) {
     } else if (token.type == TokenType::IDENTIFIER) {
         std::string out_reg = SCRATCH_REGS[reg_index];
         reg_index++;
-        if (var_offsets.find(lexeme) == var_offsets.end()) {
-            throw std::runtime_error("Variable used before assignment");
+        if (functions.find(lexeme) == functions.end()) {
+            // Identifier is a variable.
+            if (var_offsets.find(lexeme) == var_offsets.end()) {
+                throw std::runtime_error("Variable used before assignment");
+            }
+            sstream << "mov " << out_reg << ", [rbp - " << var_offsets[lexeme] << "]\n";
+        } else {
+            // Identifier is a function.
+            for (int i = 0; i < node->children.size(); i++) {
+                std::string param_reg = EvaluateRValue(node->children[i].get());
+                sstream << "mov " << FUNC_CALL_REGS[i] << ", " << param_reg << "\n";
+            }
+            sstream << "call _" << lexeme << "\n";
+            sstream << "mov " << out_reg << ", rax\n";
         }
-        // Existing variable
-        sstream << "mov " << out_reg << ", [rbp - " << var_offsets[lexeme] << "]\n";
         code += sstream.str();
         return out_reg;
     } else if (token.type == TokenType::ADD) {
@@ -207,7 +209,7 @@ std::string CodeGen::EvaluateReturnStatement(Node* node) {
     std::ostringstream sstream;
     std::string output_reg = EvaluateRValue(node->children[0].get());
     sstream << "mov rax, " << output_reg << "\n";
-    sstream << "jmp _" << function_name << "_end:\n";
+    sstream << "jmp _" << function_name << "_end\n";
     code += sstream.str();
     return "";
 }
@@ -237,13 +239,14 @@ std::string CodeGen::EvaluateStatements(Node* node) {
 void CodeGen::EvaluateFunction(FunctionNode* node) {
     std::ostringstream sstream;
     function_name = std::string(node->name.lexeme);
+    functions.insert(function_name);
     sstream << "_" << function_name << ":\n";
     sstream << "push rbp\n";
     sstream << "mov rbp, rsp\n";
     sstream << "sub rsp, 128\n";
     for (int i = 0; i < node->parameters.size(); i++) {
         int var_offset = 8 * (i + 1);
-        sstream << "mov [rbp - " << var_offset << "], " << SCRATCH_REGS[i] << "\n";
+        sstream << "mov [rbp - " << var_offset << "], " << FUNC_CALL_REGS[i] << "\n";
         std::string var_name = std::string(node->parameters[i].lexeme);
         var_offsets[var_name] = var_offset;
         total_offset += 8;
@@ -254,13 +257,14 @@ void CodeGen::EvaluateFunction(FunctionNode* node) {
     sstream << "_" << function_name << "_end:\n";
     sstream << "mov rsp, rbp\n";
     sstream << "pop rbp\n";
-    sstream << "ret\n";
+    sstream << "ret\n\n";
     code += sstream.str();
+    total_offset = 0;
 }
 
 std::string CodeGen::GetCode() {
-    return code;
+    // return code;
     // std::string offset_str = std::to_string(total_offset);
     // std::string modified_asm_prefix = asm_prefix.replace(asm_prefix.size() - 2, 1, offset_str);
-    // return modified_asm_prefix + "\n" + code + asm_postfix;
+    return asm_prefix + "\n" + code + asm_postfix;
 }
