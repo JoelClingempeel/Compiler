@@ -142,9 +142,7 @@ std::unique_ptr<Node> Parser::parseWhileStatement() {
 
 std::unique_ptr<Node> Parser::parseReturnStatement() {
     if (match(TokenType::RETURN)) {
-        std::cout << "handling return\n";
         Token token = previous();
-        std::cout << "lexeme " << token.lexeme;
         auto child = parseComparison();
         consume(TokenType::SEMICOLON);
         return std::make_unique<Node>(token, std::move(child), nullptr);

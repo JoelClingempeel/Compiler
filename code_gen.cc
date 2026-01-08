@@ -203,6 +203,15 @@ std::string CodeGen::EvaluateWhileLoop(Node* node) {
     return "";
 }
 
+std::string CodeGen::EvaluateReturnStatement(Node* node) {
+    std::ostringstream sstream;
+    std::string output_reg = EvaluateRValue(node->children[0].get());
+    sstream << "mov rax, " << output_reg << "\n";
+    sstream << "jmp _" << function_name << "_end:\n";
+    code += sstream.str();
+    return "";
+}
+
 std::string CodeGen::EvaluateStatements(Node* node) {
     Token token = node->token;
     auto lexeme = std::string(token.lexeme);
@@ -214,6 +223,8 @@ std::string CodeGen::EvaluateStatements(Node* node) {
             EvaluateIfStatement(child.get());
         } else if (child->token.type == TokenType::WHILE) {
             EvaluateWhileLoop(child.get());
+        } else if (child->token.type == TokenType::RETURN) {
+            EvaluateReturnStatement(child.get());
         }
         reg_index = 0;
     }
@@ -225,7 +236,8 @@ std::string CodeGen::EvaluateStatements(Node* node) {
 // 2. Get return value.
 void CodeGen::EvaluateFunction(FunctionNode* node) {
     std::ostringstream sstream;
-    sstream << "_" << node->name.lexeme << ":\n";
+    function_name = std::string(node->name.lexeme);
+    sstream << "_" << function_name << ":\n";
     sstream << "push rbp\n";
     sstream << "mov rbp, rsp\n";
     sstream << "sub rsp, 128\n";
@@ -239,6 +251,7 @@ void CodeGen::EvaluateFunction(FunctionNode* node) {
     code += sstream.str();
     sstream.str("");
     EvaluateStatements(node->body.get());
+    sstream << "_" << function_name << "_end:\n";
     sstream << "mov rsp, rbp\n";
     sstream << "pop rbp\n";
     sstream << "ret\n";

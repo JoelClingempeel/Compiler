@@ -15,6 +15,7 @@ class CodeGen {
     int reg_index = 0;
     std::string code = "";
     int next_label_index = 0;
+    std::string function_name = "";
 
 public:
     std::string EvaluateRValue(Node* node);
@@ -23,6 +24,7 @@ public:
     std::string EvaluateStatements(Node* node);
     std::string EvaluateIfStatement(Node* node);
     std::string EvaluateWhileLoop(Node* node);
+    std::string EvaluateReturnStatement(Node* node);
     void EvaluateFunction(FunctionNode* node);
     std::string GetCode();
 };
