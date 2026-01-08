@@ -81,7 +81,7 @@ std::string CodeGen::EvaluateRValue(Node* node) {
     } else if (token.type == TokenType::IDENTIFIER) {
         std::string out_reg = SCRATCH_REGS[reg_index];
         reg_index++;
-        if (functions.find(lexeme) == functions.end()) {
+        if (functions.find(lexeme) == functions.end() && lexeme != "print") {
             // Identifier is a variable.
             if (var_offsets.find(lexeme) == var_offsets.end()) {
                 throw std::runtime_error("Variable used before assignment");
@@ -263,8 +263,5 @@ void CodeGen::EvaluateFunction(FunctionNode* node) {
 }
 
 std::string CodeGen::GetCode() {
-    // return code;
-    // std::string offset_str = std::to_string(total_offset);
-    // std::string modified_asm_prefix = asm_prefix.replace(asm_prefix.size() - 2, 1, offset_str);
     return asm_prefix + "\n" + code + asm_postfix;
 }
